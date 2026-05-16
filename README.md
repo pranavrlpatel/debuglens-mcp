@@ -51,7 +51,7 @@ This creates a feedback loop where AI-generated code is automatically aligned wi
 ### Install Dependencies
 
 ```bash
-cd C:\Users\Pranav\debuglens-mcp
+cd /path/to/debuglens-mcp
 npm install
 ```
 
@@ -78,13 +78,15 @@ Create or update your `.mcp.json` file:
     "debuglens": {
       "command": "node",
       "args": [
-        "C:\\Users\\Pranav\\debuglens-mcp\\src\\index.js"
+        "/path/to/debuglens-mcp/src/index.js"
       ],
       "transport": "stdio"
     }
   }
 }
 ```
+
+**Note:** Replace `/path/to/debuglens-mcp` with your actual installation path. On Windows, use double backslashes (e.g., `C:\\Users\\YourName\\debuglens-mcp\\src\\index.js`).
 
 ### 2. Restart IBM Bob
 
@@ -113,7 +115,7 @@ When Bob generates code, you can validate it against your repository:
   "tool": "validate_ai_code",
   "arguments": {
     "code": "const axios = require('axios');\n\nasync function create_user(user_data) {\n  const response = await axios.post('https://api.example.com/users', user_data);\n  return response.data;\n}",
-    "repo_path": "C:\\Users\\Pranav\\debuglens-mcp\\sample-repo"
+    "repo_path": "/path/to/your-repository"
   }
 }
 ```
