@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DebugLens — AI Code Validator powered by IBM Bob</title>
+    <title>DebugLens - AI Code Validator powered by IBM Bob</title>
     <style>
         * {
             margin: 0;
@@ -12,9 +12,9 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
             line-height: 1.6;
         }
 
@@ -24,94 +24,178 @@
             padding: 0 20px;
         }
 
+        /* Header */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #58a6ff;
+        }
+
         /* Hero Section */
         .hero {
             text-align: center;
-            padding: 100px 20px 80px;
-            background: linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 35, 0.9) 100%);
+            padding: 100px 0 80px;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 64px;
             font-weight: 700;
+            color: #ffffff;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #58a6ff 0%, #79c0ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .hero .subtitle {
-            font-size: 1.8rem;
-            color: #a0a0b0;
-            margin-bottom: 40px;
-            font-weight: 300;
+            font-size: 28px;
+            color: #8b949e;
+            margin-bottom: 15px;
         }
 
         .hero .tagline {
-            font-size: 1.2rem;
-            color: #667eea;
+            font-size: 20px;
+            color: #58a6ff;
+            margin-bottom: 40px;
             font-weight: 500;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #58a6ff;
+            color: #0d1117;
+        }
+
+        .btn-primary:hover {
+            background-color: #79c0ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(88, 166, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #30363d;
+            border-color: #58a6ff;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 40px;
+            margin: 60px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #58a6ff;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: #8b949e;
         }
 
         /* Section Styles */
         section {
-            padding: 80px 20px;
+            padding: 80px 0;
         }
 
-        section h2 {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 50px;
+        .section-title {
+            font-size: 42px;
+            font-weight: 700;
             color: #ffffff;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        /* Problem Section */
-        .problem {
-            background: rgba(26, 26, 46, 0.5);
+        .section-subtitle {
+            font-size: 18px;
+            color: #8b949e;
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .pain-points {
+        /* Problem Cards */
+        .problem-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
 
-        .pain-point {
-            background: rgba(15, 15, 35, 0.8);
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
             padding: 30px;
-            border-radius: 12px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        .pain-point:hover {
+        .card:hover {
+            border-color: #58a6ff;
             transform: translateY(-5px);
-            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 8px 24px rgba(88, 166, 255, 0.15);
         }
 
-        .pain-point-icon {
-            font-size: 3rem;
+        .card-icon {
+            font-size: 48px;
             margin-bottom: 20px;
         }
 
-        .pain-point h3 {
-            font-size: 1.5rem;
+        .card h3 {
+            font-size: 22px;
+            color: #ffffff;
             margin-bottom: 15px;
-            color: #667eea;
         }
 
-        .pain-point p {
-            color: #b0b0c0;
-            line-height: 1.8;
+        .card p {
+            color: #8b949e;
+            line-height: 1.7;
         }
 
-        /* How It Works Section */
-        .how-it-works {
-            background: rgba(15, 15, 35, 0.5);
-        }
-
+        /* How It Works */
         .steps {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -121,375 +205,431 @@
 
         .step {
             text-align: center;
-            padding: 30px;
-            background: rgba(26, 26, 46, 0.6);
-            border-radius: 12px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
+            position: relative;
         }
 
         .step-number {
-            display: inline-block;
             width: 60px;
             height: 60px;
-            line-height: 60px;
+            background: linear-gradient(135deg, #58a6ff 0%, #79c0ff 100%);
+            color: #0d1117;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
         }
 
         .step h3 {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
+            font-size: 20px;
             color: #ffffff;
+            margin-bottom: 15px;
         }
 
         .step p {
-            color: #b0b0c0;
-            line-height: 1.8;
+            color: #8b949e;
         }
 
-        /* Code Comparison Section */
+        /* Violations */
+        .violations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .badge {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-high {
+            background-color: rgba(248, 81, 73, 0.15);
+            color: #f85149;
+            border: 1px solid rgba(248, 81, 73, 0.3);
+        }
+
+        .badge-medium {
+            background-color: rgba(187, 128, 9, 0.15);
+            color: #d29922;
+            border: 1px solid rgba(187, 128, 9, 0.3);
+        }
+
+        .badge-low {
+            background-color: rgba(56, 139, 253, 0.15);
+            color: #58a6ff;
+            border: 1px solid rgba(56, 139, 253, 0.3);
+        }
+
+        /* Code Comparison */
         .code-comparison {
-            background: rgba(26, 26, 46, 0.5);
-        }
-
-        .comparison-container {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-top: 40px;
         }
 
         .code-block {
-            background: #0d0d1f;
-            border-radius: 12px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
             overflow: hidden;
-            border: 1px solid rgba(102, 126, 234, 0.2);
         }
 
         .code-header {
-            padding: 15px 20px;
+            background-color: #21262d;
+            padding: 12px 20px;
             font-weight: 600;
-            font-size: 1.1rem;
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            font-size: 14px;
+            border-bottom: 1px solid #30363d;
         }
 
-        .code-header.error {
-            background: rgba(220, 38, 38, 0.2);
-            color: #fca5a5;
+        .code-header.before {
+            color: #f85149;
         }
 
-        .code-header.success {
-            background: rgba(34, 197, 94, 0.2);
-            color: #86efac;
+        .code-header.after {
+            color: #3fb950;
         }
 
         .code-content {
             padding: 20px;
             font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
+            font-size: 13px;
             line-height: 1.6;
             overflow-x: auto;
         }
 
-        .code-line {
-            color: #e0e0e0;
+        .code-content code {
+            color: #c9d1d9;
         }
 
-        .comment {
-            color: #6b7280;
+        .highlight-error {
+            background-color: rgba(248, 81, 73, 0.15);
+            padding: 2px 4px;
+            border-radius: 3px;
         }
 
-        .keyword {
-            color: #c678dd;
+        .highlight-success {
+            background-color: rgba(63, 185, 80, 0.15);
+            padding: 2px 4px;
+            border-radius: 3px;
         }
 
-        .function {
-            color: #61afef;
-        }
-
-        .string {
-            color: #98c379;
-        }
-
-        .error-marker {
-            color: #ef4444;
-            font-weight: 600;
-        }
-
-        .success-marker {
-            color: #22c55e;
-            font-weight: 600;
-        }
-
-        /* Violations Section */
-        .violations {
-            background: rgba(15, 15, 35, 0.5);
-        }
-
-        .violations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+        /* GitHub Action */
+        .github-action {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 40px;
             margin-top: 40px;
         }
 
-        .violation-card {
-            background: rgba(26, 26, 46, 0.8);
-            padding: 25px;
-            border-radius: 12px;
-            border-left: 4px solid;
-        }
-
-        .violation-card.high {
-            border-left-color: #ef4444;
-        }
-
-        .violation-card.medium {
-            border-left-color: #f59e0b;
-        }
-
-        .violation-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .violation-type {
-            font-weight: 600;
-            font-size: 1.1rem;
+        .github-action h3 {
+            font-size: 24px;
             color: #ffffff;
+            margin-bottom: 20px;
         }
 
-        .severity-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
+        .github-action pre {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
         }
 
-        .severity-badge.high {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
-        }
-
-        .severity-badge.medium {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fcd34d;
-        }
-
-        .violation-description {
-            color: #b0b0c0;
-            line-height: 1.7;
+        .github-action code {
+            color: #79c0ff;
         }
 
         /* Footer */
         footer {
-            background: rgba(15, 15, 35, 0.9);
-            padding: 40px 20px;
+            background-color: #161b22;
+            border-top: 1px solid #21262d;
+            padding: 40px 0;
             text-align: center;
-            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            margin-top: 80px;
         }
 
         footer p {
-            color: #a0a0b0;
-            margin-bottom: 15px;
+            color: #8b949e;
+            margin-bottom: 10px;
         }
 
-        .footer-link {
-            color: #667eea;
+        footer a {
+            color: #58a6ff;
             text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
         }
 
-        .footer-link:hover {
-            color: #764ba2;
+        footer a:hover {
+            text-decoration: underline;
         }
 
-        .built-with {
+        .bob-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #21262d;
+            padding: 8px 16px;
+            border-radius: 6px;
             margin-top: 20px;
-            font-size: 1.1rem;
-            color: #667eea;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 42px;
             }
 
             .hero .subtitle {
-                font-size: 1.3rem;
+                font-size: 22px;
             }
 
-            section h2 {
-                font-size: 2rem;
+            .section-title {
+                font-size: 32px;
+            }
+
+            .code-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
             }
         }
+
+        /* Animation */
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat {
+            animation: countUp 0.6s ease-out forwards;
+        }
+
+        .stat:nth-child(1) { animation-delay: 0.1s; }
+        .stat:nth-child(2) { animation-delay: 0.2s; }
+        .stat:nth-child(3) { animation-delay: 0.3s; }
+        .stat:nth-child(4) { animation-delay: 0.4s; }
     </style>
 </head>
 <body>
+    <header>
+        <div class="container">
+            <div class="logo">🔍 DebugLens</div>
+        </div>
+    </header>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <h1>DebugLens</h1>
             <p class="subtitle">AI Code Validator powered by IBM Bob</p>
-            <p class="tagline">🔍 Catch what AI misses — before it ships</p>
+            <p class="tagline">Catch what AI misses — before it ships</p>
+            <div class="hero-buttons">
+                <a href="https://github.com/yourusername/debuglens-mcp" class="btn btn-primary">View on GitHub</a>
+                <a href="#demo" class="btn btn-secondary">See It In Action</a>
+            </div>
         </div>
     </section>
 
+    <!-- Stats Bar -->
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-number">5</span>
+                <span class="stat-label">Violation Types Detected</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">< 2s</span>
+                <span class="stat-label">Analysis Time</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">32</span>
+                <span class="stat-label">Utilities Tracked</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">IBM Bob Powered</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Problem Section -->
-    <section class="problem">
+    <section>
         <div class="container">
-            <h2>The Problem with AI-Generated Code</h2>
-            <div class="pain-points">
-                <div class="pain-point">
-                    <div class="pain-point-icon">📦</div>
+            <h2 class="section-title">The Problem with AI-Generated Code</h2>
+            <p class="section-subtitle">AI assistants are powerful, but they don't know your codebase. They make assumptions that break your patterns.</p>
+            
+            <div class="problem-cards">
+                <div class="card">
+                    <div class="card-icon">📦</div>
                     <h3>Wrong Libraries</h3>
-                    <p>AI uses libraries that don't exist in your project. It suggests <code>axios</code> when you use <code>fetch</code>, creating unnecessary dependencies and inconsistencies.</p>
+                    <p>AI imports axios when your repo uses fetch. Adds dependencies you don't need and breaks consistency.</p>
                 </div>
-                <div class="pain-point">
-                    <div class="pain-point-icon">🔤</div>
-                    <h3>Naming Chaos</h3>
-                    <p>AI follows different naming conventions. It writes <code>snake_case</code> when your repo uses <code>camelCase</code>, breaking your codebase standards and readability.</p>
+                <div class="card">
+                    <div class="card-icon">✏️</div>
+                    <h3>Wrong Naming</h3>
+                    <p>AI writes snake_case when your team uses camelCase. Every identifier becomes a style violation.</p>
                 </div>
-                <div class="pain-point">
-                    <div class="pain-point-icon">🔄</div>
-                    <h3>Reinventing the Wheel</h3>
-                    <p>AI reimplements utilities that already exist in your codebase. It creates duplicate functions instead of using your existing, tested helpers.</p>
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Slow Code Patterns</h3>
+                    <p>Nested loops with O(n²) complexity, synchronous blocking operations, and memory leaks slip through.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section class="how-it-works">
+    <!-- How It Works -->
+    <section style="background-color: #161b22;">
         <div class="container">
-            <h2>How DebugLens Works</h2>
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Three steps to repo-ready code</p>
+            
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Scan Repository</h3>
-                    <p>DebugLens analyzes your codebase to understand patterns, libraries, naming conventions, and utilities you actually use.</p>
+                    <h3>Paste AI-Generated Code</h3>
+                    <p>Copy code from ChatGPT, Claude, or any AI assistant into DebugLens</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>Validate AI Code</h3>
-                    <p>When Bob generates code, DebugLens compares it against your repository patterns and detects mismatches instantly.</p>
+                    <h3>DebugLens + Bob Analyze</h3>
+                    <p>Instantly scans against your repository patterns, conventions, and utilities</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Get Actionable Fixes</h3>
-                    <p>Receive detailed reports with severity levels and suggestions. Bob can automatically fix issues before you commit.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Code Comparison Section -->
-    <section class="code-comparison">
-        <div class="container">
-            <h2>Before & After</h2>
-            <div class="comparison-container">
-                <div class="code-block">
-                    <div class="code-header error">❌ Before: AI-Generated Code</div>
-                    <div class="code-content">
-<pre class="code-line"><span class="keyword">const</span> axios = <span class="function">require</span>(<span class="string">'axios'</span>);  <span class="comment error-marker">// ❌ Wrong library</span>
-
-<span class="keyword">async function</span> <span class="function">create_new_user</span>(user_data) {  <span class="comment error-marker">// ❌ snake_case</span>
-  <span class="comment error-marker">// ❌ No try/catch</span>
-  
-  <span class="keyword">const</span> email_regex = <span class="string">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>;  <span class="comment error-marker">// ❌ Duplicate</span>
-  <span class="keyword">if</span> (!email_regex.<span class="function">test</span>(user_data.email)) {
-    <span class="keyword">return</span> { success: <span class="keyword">false</span>, error: <span class="string">'Invalid email'</span> };
-  }
-  
-  <span class="keyword">const</span> response = <span class="keyword">await</span> axios.<span class="function">post</span>(<span class="string">'https://api.example.com/users'</span>, user_data);
-  <span class="keyword">return</span> { success: <span class="keyword">true</span>, data: response.data };
-}</pre>
-                    </div>
-                </div>
-
-                <div class="code-block">
-                    <div class="code-header success">✅ After: DebugLens Fixed</div>
-                    <div class="code-content">
-<pre class="code-line"><span class="keyword">const</span> { isValidEmail } = <span class="function">require</span>(<span class="string">'./utils'</span>);  <span class="comment success-marker">// ✅ Existing utility</span>
-<span class="keyword">const</span> { handleError, handleResponse } = <span class="function">require</span>(<span class="string">'./handlers'</span>);
-
-<span class="keyword">async function</span> <span class="function">createNewUser</span>(userData) {  <span class="comment success-marker">// ✅ camelCase</span>
-  <span class="keyword">try</span> {  <span class="comment success-marker">// ✅ Error handling</span>
-    <span class="keyword">if</span> (!userData.email || !<span class="function">isValidEmail</span>(userData.email)) {
-      <span class="keyword">throw new</span> <span class="function">Error</span>(<span class="string">'Valid email required'</span>);
-    }
-    
-    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="function">fetch</span>(<span class="string">'https://api.example.com/users'</span>, {  <span class="comment success-marker">// ✅ fetch</span>
-      method: <span class="string">'POST'</span>,
-      headers: { <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span> },
-      body: <span class="function">JSON.stringify</span>(userData)
-    });
-    
-    <span class="keyword">const</span> data = <span class="keyword">await</span> response.<span class="function">json</span>();
-    <span class="keyword">return</span> <span class="function">handleResponse</span>(data, response.status);
-  } <span class="keyword">catch</span> (error) {
-    <span class="keyword">return</span> <span class="function">handleError</span>(error, <span class="string">'createNewUser'</span>);
-  }
-}</pre>
-                    </div>
+                    <h3>Get Fixed Code</h3>
+                    <p>Receive automatically corrected, repo-ready code with all issues resolved</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Violations Section -->
-    <section class="violations">
+    <section id="demo">
         <div class="container">
-            <h2>Violations Detected</h2>
-            <div class="violations-grid">
-                <div class="violation-card high">
-                    <div class="violation-header">
-                        <span class="violation-type">Library Mismatch</span>
-                        <span class="severity-badge medium">Medium</span>
-                    </div>
-                    <p class="violation-description">
-                        AI code uses <code>axios</code> library not found in repository. Your project uses native <code>fetch</code> API instead.
-                    </p>
+            <h2 class="section-title">What DebugLens Catches</h2>
+            <p class="section-subtitle">Five categories of violations detected automatically</p>
+            
+            <div class="violations">
+                <div class="badge badge-high">
+                    <span>🔴</span>
+                    <span>HIGH: Missing error handling</span>
                 </div>
+                <div class="badge badge-high">
+                    <span>🔴</span>
+                    <span>HIGH: Performance issue detected</span>
+                </div>
+                <div class="badge badge-medium">
+                    <span>🟡</span>
+                    <span>MEDIUM: Library mismatch (axios)</span>
+                </div>
+                <div class="badge badge-medium">
+                    <span>🟡</span>
+                    <span>MEDIUM: Naming convention</span>
+                </div>
+                <div class="badge badge-low">
+                    <span>🔵</span>
+                    <span>LOW: Duplicate utilities</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="violation-card medium">
-                    <div class="violation-header">
-                        <span class="violation-type">Naming Convention</span>
-                        <span class="severity-badge medium">Medium</span>
-                    </div>
-                    <p class="violation-description">
-                        AI code uses <code>snake_case</code> naming but repository predominantly uses <code>camelCase</code> convention.
-                    </p>
-                </div>
+    <!-- Code Comparison -->
+    <section style="background-color: #161b22;">
+        <div class="container">
+            <h2 class="section-title">Before & After</h2>
+            <p class="section-subtitle">See the transformation in action</p>
+            
+            <div class="code-comparison">
+                <div class="code-block">
+                    <div class="code-header before">❌ Before (AI-Generated)</div>
+                    <div class="code-content">
+<code>const <span class="highlight-error">axios</span> = require('<span class="highlight-error">axios</span>');
 
-                <div class="violation-card high">
-                    <div class="violation-header">
-                        <span class="violation-type">Error Handling</span>
-                        <span class="severity-badge high">High</span>
+async function <span class="highlight-error">create_new_user</span>(user_data) {
+  const response = await <span class="highlight-error">axios</span>.post(
+    'https://api.example.com/users',
+    user_data
+  );
+  
+  return response.data;
+}</code>
                     </div>
-                    <p class="violation-description">
-                        AI code lacks proper error handling with try/catch blocks. Repository patterns show consistent error handling.
-                    </p>
                 </div>
+                
+                <div class="code-block">
+                    <div class="code-header after">✅ After (Auto-Fixed)</div>
+                    <div class="code-content">
+<code>const { <span class="highlight-success">handleError</span> } = require('./utils');
 
-                <div class="violation-card medium">
-                    <div class="violation-header">
-                        <span class="violation-type">Duplicate Utility</span>
-                        <span class="severity-badge medium">Medium</span>
+async function <span class="highlight-success">createNewUser</span>(userData) {
+  try {
+    const response = await <span class="highlight-success">fetch</span>(
+      'https://api.example.com/users',
+      { method: 'POST', body: JSON.stringify(userData) }
+    );
+    
+    return await response.json();
+  } catch (error) {
+    return <span class="highlight-success">handleError</span>(error, 'createNewUser');
+  }
+}</code>
                     </div>
-                    <p class="violation-description">
-                        AI code reimplements email validation. Use existing <code>isValidEmail()</code> utility from your codebase.
-                    </p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GitHub Action -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">CI/CD Integration</h2>
+            <p class="section-subtitle">Automatically validate every pull request</p>
+            
+            <div class="github-action">
+                <h3>GitHub Actions Workflow</h3>
+                <pre><code>name: DebugLens Validation
+
+on: [pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run DebugLens
+        run: |
+          npm install
+          node validate-pr.js
+      - name: Comment Results
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // Auto-comment validation results on PR
+            // Fails CI if HIGH severity issues found</code></pre>
             </div>
         </div>
     </section>
@@ -497,15 +637,12 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>
-                <a href="https://github.com/yourusername/debuglens-mcp" class="footer-link" target="_blank">
-                    View on GitHub →
-                </a>
-            </p>
-            <p class="built-with">✨ Built with IBM Bob</p>
-            <p style="margin-top: 20px; font-size: 0.9rem;">
-                DebugLens — Because AI-generated code should fit your project, not the other way around. 🔍
-            </p>
+            <p>Open Source • ISC License</p>
+            <a href="https://github.com/yourusername/debuglens-mcp">View on GitHub</a>
+            <div class="bob-badge">
+                <span>🤖</span>
+                <span>Built with IBM Bob</span>
+            </div>
         </div>
     </footer>
 </body>
