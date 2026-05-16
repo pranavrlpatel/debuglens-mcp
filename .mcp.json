@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "debuglens": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\Pranav\\debuglens-mcp\\src\\index.js"
+      ],
+      "transport": "stdio"
+    }
+  }
+}
