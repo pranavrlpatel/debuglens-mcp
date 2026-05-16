@@ -419,8 +419,188 @@ async function validateCode(code, repoPath) {
   }
 }
 
+/**
+ * Automatically fixes AI-generated code based on validation results
+ * Applies corrections for library mismatches, naming conventions, error handling, and duplicate utilities
+ *
+ * @param {string} code - AI-generated code to fix
+ * @param {string} repoPath - Path to repository folder
+ * @returns {Object} Fix results with issues found, fixed code, and list of fixes applied
+ */
+async function autoFixCode(code, repoPath) {
+  try {
+    // Step 1: Run full validation first
+    const validationResult = await validateCode(code, repoPath);
+    
+    if (validationResult.issues.length === 0) {
+      return {
+        issues_found: [],
+        fixed_code: code,
+        fixes_applied: ['No issues detected - code is already compliant']
+      };
+    }
+    
+    let fixedCode = code;
+    const fixesApplied = [];
+    const issuesFound = validationResult.issues;
+    
+    // Step 2: Fix library mismatches
+    const libraryIssue = issuesFound.find(i => i.type === 'library_mismatch');
+    if (libraryIssue && libraryIssue.details) {
+      const repoImports = validationResult.patterns_found.imports;
+      
+      libraryIssue.details.forEach(unusedLib => {
+        // Try to find similar library in repo
+        const similarLib = repoImports.find(lib =>
+          lib.includes(unusedLib.split('/').pop()) ||
+          unusedLib.includes(lib.split('/').pop())
+        );
+        
+        if (similarLib) {
+          // Replace import statements
+          const importRegex = new RegExp(`(['"])${unusedLib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\1`, 'g');
+          fixedCode = fixedCode.replace(importRegex, `$1${similarLib}$1`);
+          fixesApplied.push(`Replaced library '${unusedLib}' with repository library '${similarLib}'`);
+        } else {
+          // Remove unused import if no similar library found
+          const removeImportRegex = new RegExp(`import\\s+.*?from\\s+['"]${unusedLib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"];?\\s*\\n?`, 'g');
+          const removeRequireRegex = new RegExp(`(?:const|let|var)\\s+.*?=\\s*require\\s*\\(\\s*['"]${unusedLib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"]\\s*\\);?\\s*\\n?`, 'g');
+          
+          fixedCode = fixedCode.replace(removeImportRegex, '');
+          fixedCode = fixedCode.replace(removeRequireRegex, '');
+          fixesApplied.push(`Removed unused library import '${unusedLib}'`);
+        }
+      });
+    }
+    
+    // Step 3: Fix naming convention violations
+    const namingIssue = issuesFound.find(i => i.type === 'naming_convention');
+    if (namingIssue && namingIssue.details) {
+      const repoConvention = namingIssue.details.repo_convention;
+      
+      if (repoConvention === 'camelCase') {
+        // Convert snake_case to camelCase
+        const snakeCaseRegex = /\b([a-z]+)_([a-z]+(?:_[a-z]+)*)\b/g;
+        fixedCode = fixedCode.replace(snakeCaseRegex, (match, first, rest) => {
+          const camelCased = first + rest.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
+          return camelCased;
+        });
+        fixesApplied.push('Converted snake_case identifiers to camelCase to match repository convention');
+      } else if (repoConvention === 'snake_case') {
+        // Convert camelCase to snake_case
+        const camelCaseRegex = /\b([a-z]+)([A-Z][a-z]+(?:[A-Z][a-z]+)*)\b/g;
+        fixedCode = fixedCode.replace(camelCaseRegex, (match) => {
+          return match.replace(/([A-Z])/g, '_$1').toLowerCase();
+        });
+        fixesApplied.push('Converted camelCase identifiers to snake_case to match repository convention');
+      }
+    }
+    
+    // Step 4: Add error handling if missing
+    const errorHandlingIssue = issuesFound.find(i => i.type === 'error_handling');
+    if (errorHandlingIssue) {
+      const missingPatterns = errorHandlingIssue.details?.missing_patterns || [];
+      
+      if (missingPatterns.includes('try-catch blocks')) {
+        // Wrap async functions and risky operations in try-catch
+        const asyncFuncRegex = /(async\s+function\s+\w+\s*\([^)]*\)\s*\{)([\s\S]*?)(\n\})/g;
+        fixedCode = fixedCode.replace(asyncFuncRegex, (match, funcStart, body, funcEnd) => {
+          // Check if already has try-catch
+          if (body.trim().startsWith('try')) {
+            return match;
+          }
+          
+          const indentedBody = body.split('\n').map(line => '  ' + line).join('\n');
+          return `${funcStart}\n  try {${indentedBody}\n  } catch (error) {\n    console.error('Error:', error.message);\n    throw error;\n  }${funcEnd}`;
+        });
+        
+        // Wrap arrow async functions
+        const arrowAsyncRegex = /(const|let|var)\s+(\w+)\s*=\s*async\s*\(([^)]*)\)\s*=>\s*\{([\s\S]*?)(\n\};?)/g;
+        fixedCode = fixedCode.replace(arrowAsyncRegex, (match, varType, funcName, params, body, funcEnd) => {
+          // Check if already has try-catch
+          if (body.trim().startsWith('try')) {
+            return match;
+          }
+          
+          const indentedBody = body.split('\n').map(line => '  ' + line).join('\n');
+          return `${varType} ${funcName} = async (${params}) => {\n  try {${indentedBody}\n  } catch (error) {\n    console.error('Error in ${funcName}:', error.message);\n    throw error;\n  }${funcEnd}`;
+        });
+        
+        fixesApplied.push('Added try-catch error handling blocks to async functions');
+      }
+    }
+    
+    // Step 5: Replace duplicate utilities with imports from repository
+    const duplicateIssue = issuesFound.find(i => i.type === 'duplicate_utility');
+    if (duplicateIssue && duplicateIssue.details) {
+      const repoExports = validationResult.patterns_found.exported_utilities;
+      
+      duplicateIssue.details.forEach(funcName => {
+        if (repoExports.includes(funcName)) {
+          // Remove the function definition
+          const funcDefRegex = new RegExp(`function\\s+${funcName}\\s*\\([^)]*\\)\\s*\\{[\\s\\S]*?\\n\\}`, 'g');
+          const arrowFuncRegex = new RegExp(`(?:const|let|var)\\s+${funcName}\\s*=\\s*(?:async\\s*)?\\([^)]*\\)\\s*=>\\s*\\{[\\s\\S]*?\\n\\};?`, 'g');
+          
+          fixedCode = fixedCode.replace(funcDefRegex, '');
+          fixedCode = fixedCode.replace(arrowFuncRegex, '');
+          
+          // Add import if not already present
+          const hasUtilsImport = /require\s*\(\s*['"]\.\/utils['"]\s*\)/.test(fixedCode) ||
+                                 /from\s+['"]\.\/utils['"]/.test(fixedCode);
+          
+          if (!hasUtilsImport) {
+            // Add require statement at the top
+            const firstLine = fixedCode.split('\n')[0];
+            if (firstLine.includes('require') || firstLine.includes('import')) {
+              fixedCode = `const { ${funcName} } = require('./utils');\n${fixedCode}`;
+            } else {
+              fixedCode = `const { ${funcName} } = require('./utils');\n\n${fixedCode}`;
+            }
+          } else {
+            // Add to existing import
+            fixedCode = fixedCode.replace(
+              /const\s+\{([^}]+)\}\s*=\s*require\s*\(\s*['"]\.\/utils['"]\s*\)/,
+              (match, imports) => {
+                if (!imports.includes(funcName)) {
+                  return `const { ${imports.trim()}, ${funcName} } = require('./utils')`;
+                }
+                return match;
+              }
+            );
+          }
+          
+          fixesApplied.push(`Removed duplicate function '${funcName}' and imported from repository utilities`);
+        }
+      });
+    }
+    
+    // Clean up extra blank lines
+    fixedCode = fixedCode.replace(/\n{3,}/g, '\n\n');
+    
+    return {
+      issues_found: issuesFound,
+      fixed_code: fixedCode,
+      fixes_applied: fixesApplied.length > 0 ? fixesApplied : ['No automatic fixes could be applied']
+    };
+    
+  } catch (error) {
+    console.error(`[Validator] Error during auto-fix: ${error.message}`);
+    
+    return {
+      issues_found: [{
+        type: 'auto_fix_error',
+        description: `Auto-fix failed: ${error.message}`,
+        severity: 'critical'
+      }],
+      fixed_code: code,
+      fixes_applied: ['Auto-fix failed - returning original code']
+    };
+  }
+}
+
 module.exports = {
   validateCode,
+  autoFixCode,
   // Export helper functions for testing
   getAllJsFiles,
   extractImports,

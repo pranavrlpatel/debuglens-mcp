@@ -1,0 +1,177 @@
+name: DebugLens Code Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+    paths:
+      - '**.js'
+      - '**.jsx'
+      - '**.ts'
+      - '**.tsx'
+
+jobs:
+  validate-code:
+    name: Validate AI-Generated Code
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Get changed JavaScript files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            **/*.js
+            **/*.jsx
+            **/*.ts
+            **/*.tsx
+      
+      - name: Run DebugLens validation
+        id: validation
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Changed files: ${{ steps.changed-files.outputs.all_changed_files }}"
+          
+          # Create validation results file
+          echo "# DebugLens Validation Results" > validation-results.md
+          echo "" >> validation-results.md
+          
+          # Initialize counters
+          HIGH_SEVERITY_COUNT=0
+          TOTAL_ISSUES=0
+          
+          # Validate each changed file
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "Validating: $file"
+            echo "## File: \`$file\`" >> validation-results.md
+            echo "" >> validation-results.md
+            
+            # Run validation test
+            VALIDATION_OUTPUT=$(node test-validation.js "$file" 2>&1 || true)
+            
+            # Parse validation output for issues
+            if echo "$VALIDATION_OUTPUT" | grep -q "severity.*high\|severity.*critical"; then
+              HIGH_SEVERITY_COUNT=$((HIGH_SEVERITY_COUNT + 1))
+            fi
+            
+            # Count total issues
+            ISSUE_COUNT=$(echo "$VALIDATION_OUTPUT" | grep -c "severity" || echo "0")
+            TOTAL_ISSUES=$((TOTAL_ISSUES + ISSUE_COUNT))
+            
+            # Add validation output to results
+            echo '```json' >> validation-results.md
+            echo "$VALIDATION_OUTPUT" >> validation-results.md
+            echo '```' >> validation-results.md
+            echo "" >> validation-results.md
+          done
+          
+          # Add summary
+          echo "---" >> validation-results.md
+          echo "" >> validation-results.md
+          echo "### Summary" >> validation-results.md
+          echo "- **Total files validated:** $(echo '${{ steps.changed-files.outputs.all_changed_files }}' | wc -w)" >> validation-results.md
+          echo "- **Total issues found:** $TOTAL_ISSUES" >> validation-results.md
+          echo "- **High/Critical severity issues:** $HIGH_SEVERITY_COUNT" >> validation-results.md
+          echo "" >> validation-results.md
+          
+          if [ $HIGH_SEVERITY_COUNT -gt 0 ]; then
+            echo "⚠️ **Action Required:** High or critical severity issues detected. Please review and fix before merging." >> validation-results.md
+            echo "validation_status=failed" >> $GITHUB_OUTPUT
+          else
+            echo "✅ **All checks passed!** No high severity issues detected." >> validation-results.md
+            echo "validation_status=passed" >> $GITHUB_OUTPUT
+          fi
+          
+          # Save counters for later steps
+          echo "high_severity_count=$HIGH_SEVERITY_COUNT" >> $GITHUB_OUTPUT
+          echo "total_issues=$TOTAL_ISSUES" >> $GITHUB_OUTPUT
+      
+      - name: Comment PR with validation results
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const validationResults = fs.readFileSync('validation-results.md', 'utf8');
+            
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('DebugLens Validation Results')
+            );
+            
+            const commentBody = `## 🔍 DebugLens Validation Results
+            
+${validationResults}
+
+---
+*Automated validation by [DebugLens MCP Server](https://github.com/yourusername/debuglens-mcp)*
+*Triggered by commit: ${context.sha.substring(0, 7)}*`;
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+            }
+      
+      - name: Upload validation results as artifact
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: debuglens-validation-results
+          path: validation-results.md
+          retention-days: 30
+      
+      - name: Fail workflow if high severity issues found
+        if: steps.validation.outputs.validation_status == 'failed'
+        run: |
+          echo "❌ Validation failed: ${{ steps.validation.outputs.high_severity_count }} high/critical severity issues found"
+          echo "Please review the validation results and fix the issues before merging."
+          exit 1
+      
+      - name: Success message
+        if: steps.validation.outputs.validation_status == 'passed'
+        run: |
+          echo "✅ Validation passed: No high severity issues detected"
+          echo "Total issues found: ${{ steps.validation.outputs.total_issues }}"
+
+# Made with Bob

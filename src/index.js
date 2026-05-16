@@ -10,7 +10,7 @@
 const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
 const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
 const { CallToolRequestSchema, ListToolsRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
-const { validateCode } = require("./validator.js");
+const { validateCode, autoFixCode } = require("./validator.js");
 
 /**
  * Main server initialization and execution
@@ -55,6 +55,24 @@ async function main() {
               required: ["code", "repo_path"],
             },
           },
+          {
+            name: "auto_fix_code",
+            description: "Automatically fixes AI-generated code by validating against repository context and applying corrections. Fixes library mismatches, naming conventions, error handling, and duplicate utilities.",
+            inputSchema: {
+              type: "object",
+              properties: {
+                code: {
+                  type: "string",
+                  description: "The AI generated code to validate and fix",
+                },
+                repo_path: {
+                  type: "string",
+                  description: "Path to the repository folder for context analysis",
+                },
+              },
+              required: ["code", "repo_path"],
+            },
+          },
         ],
       };
     });
@@ -68,7 +86,7 @@ async function main() {
         const { name, arguments: args } = request.params;
 
         // Validate tool name
-        if (name !== "validate_ai_code") {
+        if (name !== "validate_ai_code" && name !== "auto_fix_code") {
           throw new Error(`Unknown tool: ${name}`);
         }
 
@@ -89,32 +107,67 @@ async function main() {
           throw new Error("Invalid 'repo_path' parameter: must be a non-empty string");
         }
 
-        // Log the validation request (to stderr for debugging)
-        console.error(`[DebugLens] Validating code against repository: ${repo_path}`);
-        console.error(`[DebugLens] Code length: ${code.length} characters`);
+        // Handle validate_ai_code tool
+        if (name === "validate_ai_code") {
+          // Log the validation request (to stderr for debugging)
+          console.error(`[DebugLens] Validating code against repository: ${repo_path}`);
+          console.error(`[DebugLens] Code length: ${code.length} characters`);
 
-        // Perform validation using the validator module
-        const validationResult = await validateCode(code, repo_path);
-        
-        // Add metadata to the result
-        const enrichedResult = {
-          status: validationResult.issues.some(i => i.severity === 'critical') ? "error" : "success",
-          message: "Code validation completed",
-          timestamp: new Date().toISOString(),
-          code_length: code.length,
-          repo_path: repo_path,
-          ...validationResult
-        };
+          // Perform validation using the validator module
+          const validationResult = await validateCode(code, repo_path);
+          
+          // Add metadata to the result
+          const enrichedResult = {
+            status: validationResult.issues.some(i => i.severity === 'critical') ? "error" : "success",
+            message: "Code validation completed",
+            timestamp: new Date().toISOString(),
+            code_length: code.length,
+            repo_path: repo_path,
+            ...validationResult
+          };
 
-        // Return successful response
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(enrichedResult, null, 2),
-            },
-          ],
-        };
+          // Return successful response
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(enrichedResult, null, 2),
+              },
+            ],
+          };
+        }
+
+        // Handle auto_fix_code tool
+        if (name === "auto_fix_code") {
+          // Log the auto-fix request (to stderr for debugging)
+          console.error(`[DebugLens] Auto-fixing code against repository: ${repo_path}`);
+          console.error(`[DebugLens] Code length: ${code.length} characters`);
+
+          // Perform auto-fix using the validator module
+          const fixResult = await autoFixCode(code, repo_path);
+          
+          // Add metadata to the result
+          const enrichedResult = {
+            status: fixResult.issues_found.some(i => i.severity === 'critical') ? "partial_fix" : "success",
+            message: "Code auto-fix completed",
+            timestamp: new Date().toISOString(),
+            original_code_length: code.length,
+            fixed_code_length: fixResult.fixed_code.length,
+            repo_path: repo_path,
+            ...fixResult
+          };
+
+          // Return successful response
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(enrichedResult, null, 2),
+              },
+            ],
+          };
+        }
+
       } catch (error) {
         // Handle tool execution errors
         console.error(`[DebugLens] Tool execution error: ${error.message}`);
