@@ -93,6 +93,48 @@ function validate_user_data(user_data) {
 }
 
 /**
+ * PERFORMANCE ISSUE 1: Nested loops - O(n²) complexity
+ * Finds duplicate emails in user list
+ * @param {Array} users - List of user objects
+ * @returns {Array} List of duplicate emails
+ */
+function find_duplicate_emails(users) {
+  const duplicates = [];
+  
+  // Nested loop - O(n²) complexity issue
+  for (let i = 0; i < users.length; i++) {
+    for (let j = i + 1; j < users.length; j++) {
+      if (users[i].email === users[j].email) {
+        duplicates.push(users[i].email);
+      }
+    }
+  }
+  
+  return duplicates;
+}
+
+/**
+ * PERFORMANCE ISSUE 2: Array length recalculated in loop
+ * Processes user list with inefficient loop
+ * @param {Array} users - List of users to process
+ * @returns {Array} Processed users
+ */
+function process_user_list(users) {
+  const processed = [];
+  
+  // Array length recalculated on every iteration
+  for (let i = 0; i < users.length; i++) {
+    processed.push({
+      ...users[i],
+      processed: true,
+      timestamp: Date.now()
+    });
+  }
+  
+  return processed;
+}
+
+/**
  * Main function to handle user creation with validation
  * @param {Object} user_data - User data
  * @returns {Promise<Object>} Result of user creation
@@ -118,7 +160,9 @@ async function handle_user_creation(user_data) {
 module.exports = {
   create_new_user,
   validate_user_data,
-  handle_user_creation
+  handle_user_creation,
+  find_duplicate_emails,
+  process_user_list
 };
 
 // Made with Bob

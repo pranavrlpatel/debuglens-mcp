@@ -214,6 +214,95 @@ function checkErrorHandling(code) {
     score: (hasTryCatch ? 1 : 0) + (hasErrorChecks ? 1 : 0) + (hasThrows ? 1 : 0)
   };
 }
+/**
+ * Checks code for performance issues and anti-patterns
+ * @param {string} code - Source code to analyze
+ * @returns {Array<Object>} Array of performance issues found
+ */
+function checkPerformance(code) {
+  const performanceIssues = [];
+  
+  // 1. Detect Nested Loops (O(n²) complexity)
+  const nestedLoopRegex = /(?:for|while)\s*\([^)]*\)\s*\{[^{}]*(?:for|while)\s*\([^)]*\)\s*\{/gs;
+  if (nestedLoopRegex.test(code)) {
+    performanceIssues.push({
+      type: 'performance',
+      description: 'Nested loops detected - O(n²) complexity risk',
+      severity: 'high',
+      suggestion: 'Consider using hash maps, Set, or Map data structures to reduce complexity to O(n)'
+    });
+  }
+  
+  // 2. Detect Synchronous Blocking Operations
+  const syncOpsRegex = /\b(readFileSync|writeFileSync|execSync)\b/g;
+  const syncOpsMatches = code.match(syncOpsRegex);
+  if (syncOpsMatches) {
+    performanceIssues.push({
+      type: 'performance',
+      description: `Synchronous operation blocks the thread: ${syncOpsMatches.join(', ')}`,
+      severity: 'high',
+      suggestion: 'Use async alternatives: readFile, writeFile, exec with promises or callbacks'
+    });
+  }
+  
+  // 3. Detect Array Length in Loop Condition
+  const arrayLengthInLoopRegex = /for\s*\([^;]*;\s*[^;]*\.length\s*[;<]/g;
+  if (arrayLengthInLoopRegex.test(code)) {
+    performanceIssues.push({
+      type: 'performance',
+      description: 'Recalculates array length on every iteration',
+      severity: 'medium',
+      suggestion: 'Cache array length in a variable before the loop: const len = array.length'
+    });
+  }
+  
+  // 4. Detect Missing Await on Fetch
+  const fetchWithoutAwaitRegex = /(?<!await\s+)fetch\s*\(/g;
+  const fetchMatches = [...code.matchAll(fetchWithoutAwaitRegex)];
+  
+  // Filter out cases where fetch is already awaited or returned
+  const problematicFetches = fetchMatches.filter(match => {
+    const beforeFetch = code.substring(Math.max(0, match.index - 20), match.index);
+    const afterFetch = code.substring(match.index, Math.min(code.length, match.index + 100));
+    
+    // Check if it's awaited or returned
+    const isAwaited = /await\s*$/.test(beforeFetch);
+    const isReturned = /return\s+$/.test(beforeFetch);
+    
+    return !isAwaited && !isReturned;
+  });
+  
+  if (problematicFetches.length > 0) {
+    performanceIssues.push({
+      type: 'performance',
+      description: 'fetch() called without await - unhandled promise',
+      severity: 'high',
+      suggestion: 'Add await keyword before fetch() or use .then() to handle the promise'
+    });
+  }
+  
+  // 5. Detect Event Listeners Without Cleanup
+  const addEventListenerRegex = /addEventListener\s*\(/g;
+  const removeEventListenerRegex = /removeEventListener\s*\(/g;
+  
+  const addListenerMatches = code.match(addEventListenerRegex);
+  const removeListenerMatches = code.match(removeEventListenerRegex);
+  
+  const addCount = addListenerMatches ? addListenerMatches.length : 0;
+  const removeCount = removeListenerMatches ? removeListenerMatches.length : 0;
+  
+  if (addCount > 0 && removeCount === 0) {
+    performanceIssues.push({
+      type: 'performance',
+      description: 'Event listener added but never removed - memory leak risk',
+      severity: 'medium',
+      suggestion: 'Add cleanup logic with removeEventListener in cleanup/unmount functions'
+    });
+  }
+  
+  return performanceIssues;
+}
+
 
 /**
  * Main validation function
@@ -368,6 +457,10 @@ async function validateCode(code, repoPath) {
         issues[issues.length - 1].details.missing_patterns.push('error condition checks');
       }
     }
+    
+    // Check for performance issues
+    const performanceIssues = checkPerformance(code);
+    issues.push(...performanceIssues);
     
     // Generate suggestion
     let suggestion = 'Code looks good!';
@@ -607,7 +700,8 @@ module.exports = {
   extractFunctions,
   detectNamingConvention,
   extractExportedUtilities,
-  checkErrorHandling
+  checkErrorHandling,
+  checkPerformance
 };
 
 // Made with Bob
