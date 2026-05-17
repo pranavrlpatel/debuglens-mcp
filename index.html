@@ -11,639 +11,560 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background-color: #0d1117;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0d1117;
             color: #c9d1d9;
-            line-height: 1.6;
+            line-height: 1.7;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            max-width: 1240px;
+            margin: auto;
+            padding: 0 24px;
         }
 
-        /* Header */
         header {
-            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(13,17,23,0.92);
             border-bottom: 1px solid #21262d;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
         }
 
         .logo {
             font-size: 24px;
-            font-weight: 600;
+            font-weight: 700;
             color: #58a6ff;
         }
 
-        /* Hero Section */
         .hero {
             text-align: center;
-            padding: 100px 0 80px;
+            padding: 120px 0 90px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(88,166,255,0.2), transparent 70%);
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
         }
 
         .hero h1 {
-            font-size: 64px;
-            font-weight: 700;
-            color: #ffffff;
+            font-size: 76px;
+            line-height: 1.15;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #58a6ff 0%, #79c0ff 100%);
+            padding-bottom: 10px;
+            background: linear-gradient(135deg,#58a6ff,#79c0ff,#a5d6ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
-        .hero .subtitle {
+        .subtitle {
             font-size: 28px;
             color: #8b949e;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
-        .hero .tagline {
-            font-size: 20px;
+        .tagline {
+            font-size: 22px;
             color: #58a6ff;
+            font-weight: 600;
+            margin-bottom: 28px;
+        }
+
+        .hero-badges,
+        .violations,
+        .workflow-badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .hero-badges {
             margin-bottom: 40px;
-            font-weight: 500;
+        }
+
+        .badge {
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            border: 1px solid transparent;
+        }
+
+        .badge-high {
+            background: rgba(248,81,73,0.12);
+            color: #f85149;
+            border-color: rgba(248,81,73,0.35);
+        }
+
+        .badge-medium {
+            background: rgba(210,153,34,0.12);
+            color: #d29922;
+            border-color: rgba(210,153,34,0.35);
+        }
+
+        .badge-low {
+            background: rgba(88,166,255,0.12);
+            color: #58a6ff;
+            border-color: rgba(88,166,255,0.35);
         }
 
         .hero-buttons {
             display: flex;
-            gap: 20px;
             justify-content: center;
+            gap: 18px;
             flex-wrap: wrap;
         }
 
         .btn {
-            padding: 14px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 6px;
+            padding: 15px 30px;
+            border-radius: 10px;
             text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-block;
+            font-weight: 700;
+            transition: .3s ease;
         }
 
         .btn-primary {
-            background-color: #58a6ff;
+            background: #58a6ff;
             color: #0d1117;
         }
 
         .btn-primary:hover {
-            background-color: #79c0ff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(88, 166, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(88,166,255,.35);
         }
 
         .btn-secondary {
-            background-color: #21262d;
+            border: 1px solid #30363d;
             color: #c9d1d9;
-            border: 1px solid #30363d;
+            background: #161b22;
         }
 
-        .btn-secondary:hover {
-            background-color: #30363d;
-            border-color: #58a6ff;
+        section {
+            padding: 90px 0;
         }
 
-        /* Stats Bar */
-        .stats-bar {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 40px;
-            margin: 60px 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .stat {
+        .section-title {
+            font-size: 48px;
             text-align: center;
+            margin-bottom: 18px;
+            color: white;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            max-width: 780px;
+            margin: auto auto 60px;
+            color: #8b949e;
+            font-size: 19px;
+        }
+
+        .stats-bar,
+        .grid-3,
+        .features-grid,
+        .impact-grid {
+            display: grid;
+            gap: 28px;
+        }
+
+        .stats-bar {
+            grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+            margin-top: -30px;
+        }
+
+        .grid-3,
+        .features-grid,
+        .impact-grid {
+            grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+        }
+
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 18px;
+            padding: 32px;
+            transition: .3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: #58a6ff;
+            box-shadow: 0 18px 40px rgba(88,166,255,.12);
         }
 
         .stat-number {
-            font-size: 48px;
-            font-weight: 700;
+            font-size: 52px;
             color: #58a6ff;
+            font-weight: 800;
             display: block;
             margin-bottom: 10px;
         }
 
-        .stat-label {
-            font-size: 16px;
-            color: #8b949e;
-        }
-
-        /* Section Styles */
-        section {
-            padding: 80px 0;
-        }
-
-        .section-title {
-            font-size: 42px;
-            font-weight: 700;
-            color: #ffffff;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .section-subtitle {
-            font-size: 18px;
-            color: #8b949e;
-            text-align: center;
-            margin-bottom: 60px;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Problem Cards */
-        .problem-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 30px;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            border-color: #58a6ff;
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(88, 166, 255, 0.15);
-        }
-
-        .card-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
         .card h3 {
-            font-size: 22px;
-            color: #ffffff;
-            margin-bottom: 15px;
+            margin: 18px 0 12px;
+            color: white;
+            font-size: 24px;
         }
 
-        .card p {
+        .card p,
+        .card li {
             color: #8b949e;
-            line-height: 1.7;
         }
 
-        /* How It Works */
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-top: 40px;
-        }
-
-        .step {
-            text-align: center;
-            position: relative;
-        }
-
-        .step-number {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #58a6ff 0%, #79c0ff 100%);
-            color: #0d1117;
+        .feature-number {
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
+            background: linear-gradient(135deg,#58a6ff,#79c0ff);
+            color: #0d1117;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            font-weight: 700;
-            margin: 0 auto 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
         }
 
-        .step h3 {
-            font-size: 20px;
-            color: #ffffff;
-            margin-bottom: 15px;
-        }
-
-        .step p {
-            color: #8b949e;
-        }
-
-        /* Violations */
-        .violations {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 40px;
-        }
-
-        .badge {
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .badge-high {
-            background-color: rgba(248, 81, 73, 0.15);
-            color: #f85149;
-            border: 1px solid rgba(248, 81, 73, 0.3);
-        }
-
-        .badge-medium {
-            background-color: rgba(187, 128, 9, 0.15);
-            color: #d29922;
-            border: 1px solid rgba(187, 128, 9, 0.3);
-        }
-
-        .badge-low {
-            background-color: rgba(56, 139, 253, 0.15);
-            color: #58a6ff;
-            border: 1px solid rgba(56, 139, 253, 0.3);
-        }
-
-        /* Code Comparison */
-        .code-comparison {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .code-block {
-            background-color: #161b22;
+        .code-window,
+        .github-action {
+            background: #161b22;
             border: 1px solid #30363d;
-            border-radius: 6px;
+            border-radius: 18px;
             overflow: hidden;
         }
 
         .code-header {
-            background-color: #21262d;
-            padding: 12px 20px;
-            font-weight: 600;
-            font-size: 14px;
-            border-bottom: 1px solid #30363d;
+            background: #21262d;
+            padding: 16px 20px;
+            font-weight: 700;
         }
 
-        .code-header.before {
-            color: #f85149;
-        }
-
-        .code-header.after {
-            color: #3fb950;
-        }
-
-        .code-content {
-            padding: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
+        pre {
             overflow-x: auto;
-        }
-
-        .code-content code {
-            color: #c9d1d9;
-        }
-
-        .highlight-error {
-            background-color: rgba(248, 81, 73, 0.15);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .highlight-success {
-            background-color: rgba(63, 185, 80, 0.15);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        /* GitHub Action */
-        .github-action {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 40px;
-            margin-top: 40px;
-        }
-
-        .github-action h3 {
-            font-size: 24px;
-            color: #ffffff;
-            margin-bottom: 20px;
-        }
-
-        .github-action pre {
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 20px;
-            overflow-x: auto;
+            padding: 24px;
             font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .github-action code {
+            line-height: 1.7;
             color: #79c0ff;
         }
 
-        /* Footer */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+
         footer {
-            background-color: #161b22;
             border-top: 1px solid #21262d;
-            padding: 40px 0;
+            padding: 50px 0;
             text-align: center;
-            margin-top: 80px;
+            background: #161b22;
         }
 
         footer p {
             color: #8b949e;
-            margin-bottom: 10px;
         }
 
-        footer a {
-            color: #58a6ff;
-            text-decoration: none;
+        @media(max-width:900px){
+            .hero h1 { font-size: 54px; }
+            .comparison { grid-template-columns: 1fr; }
         }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        .bob-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #21262d;
-            padding: 8px 16px;
-            border-radius: 6px;
-            margin-top: 20px;
-            font-weight: 600;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 42px;
-            }
-
-            .hero .subtitle {
-                font-size: 22px;
-            }
-
-            .section-title {
-                font-size: 32px;
-            }
-
-            .code-comparison {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-bar {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Animation */
-        @keyframes countUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .stat {
-            animation: countUp 0.6s ease-out forwards;
-        }
-
-        .stat:nth-child(1) { animation-delay: 0.1s; }
-        .stat:nth-child(2) { animation-delay: 0.2s; }
-        .stat:nth-child(3) { animation-delay: 0.3s; }
-        .stat:nth-child(4) { animation-delay: 0.4s; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
+<header>
+    <div class="container">
+        <nav>
             <div class="logo">🔍 DebugLens</div>
-        </div>
-    </header>
+            <div class="badge badge-low">Built with IBM Bob</div>
+        </nav>
+    </div>
+</header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>DebugLens</h1>
-            <p class="subtitle">AI Code Validator powered by IBM Bob</p>
-            <p class="tagline">Catch what AI misses — before it ships</p>
-            <div class="hero-buttons">
-                <a href="https://github.com/yourusername/debuglens-mcp" class="btn btn-primary">View on GitHub</a>
-                <a href="#demo" class="btn btn-secondary">See It In Action</a>
-            </div>
-        </div>
-    </section>
+<section class="hero">
+    <div class="container">
+        <h1>DebugLens</h1>
+        <p class="subtitle">AI Code Validator powered by IBM Bob</p>
+        <p class="tagline">Catch what AI misses — before it ships.</p>
 
-    <!-- Stats Bar -->
+        <div class="hero-badges">
+            <span class="badge badge-low">⚡ Performance Analyzer</span>
+            <span class="badge badge-medium">🔧 Auto-Fix Engine</span>
+            <span class="badge badge-medium">🔄 Auto PR Reviews</span>
+            <span class="badge badge-high">🚫 Merge Blocking</span>
+            <span class="badge badge-low">⚙️ MCP Powered</span>
+        </div>
+
+        <div style="margin-top: -10px; margin-bottom: 40px; display:flex; justify-content:center; gap:22px; flex-wrap:wrap; color:#8b949e; font-size:14px; font-weight:600;">
+            <span>Analyze AI Code</span>
+            <span>→</span>
+            <span>Auto Fix Issues</span>
+            <span>→</span>
+            <span>Review Pull Requests</span>
+            <span>→</span>
+            <span>Block Unsafe Merges</span>
+        </div>
+
+        <div class="hero-buttons">
+            <a href="#features" class="btn btn-primary">Explore Features</a>
+            <a href="#workflow" class="btn btn-secondary">View GitHub Workflow</a>
+        </div>
+    </div>
+</section>
+
+<section>
     <div class="container">
         <div class="stats-bar">
-            <div class="stat">
-                <span class="stat-number">5</span>
-                <span class="stat-label">Violation Types Detected</span>
+            <div class="card">
+                <span class="stat-number">6</span>
+                <p>Core AI validation features</p>
             </div>
-            <div class="stat">
+            <div class="card">
                 <span class="stat-number">< 2s</span>
-                <span class="stat-label">Analysis Time</span>
+                <p>Average validation time</p>
             </div>
-            <div class="stat">
-                <span class="stat-number">32</span>
-                <span class="stat-label">Utilities Tracked</span>
+            <div class="card">
+                <span class="stat-number">32+</span>
+                <p>Utilities tracked automatically</p>
             </div>
-            <div class="stat">
+            <div class="card">
                 <span class="stat-number">100%</span>
-                <span class="stat-label">IBM Bob Powered</span>
+                <p>Repository pattern matching</p>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Problem Section -->
-    <section>
-        <div class="container">
-            <h2 class="section-title">The Problem with AI-Generated Code</h2>
-            <p class="section-subtitle">AI assistants are powerful, but they don't know your codebase. They make assumptions that break your patterns.</p>
-            
-            <div class="problem-cards">
-                <div class="card">
-                    <div class="card-icon">📦</div>
-                    <h3>Wrong Libraries</h3>
-                    <p>AI imports axios when your repo uses fetch. Adds dependencies you don't need and breaks consistency.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">✏️</div>
-                    <h3>Wrong Naming</h3>
-                    <p>AI writes snake_case when your team uses camelCase. Every identifier becomes a style violation.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">⚡</div>
-                    <h3>Slow Code Patterns</h3>
-                    <p>Nested loops with O(n²) complexity, synchronous blocking operations, and memory leaks slip through.</p>
-                </div>
+<section>
+    <div class="container">
+        <h2 class="section-title">The Problem with AI-Generated Code</h2>
+        <p class="section-subtitle">AI tools generate fast code — but they do not understand your repository conventions, architecture, utilities, or performance standards.</p>
+
+        <div class="grid-3">
+            <div class="card">
+                <div style="font-size:52px;">📦</div>
+                <h3>Wrong Libraries</h3>
+                <p>AI imports axios while your repository uses fetch. This creates inconsistency and unnecessary dependencies.</p>
+            </div>
+
+            <div class="card">
+                <div style="font-size:52px;">✏️</div>
+                <h3>Broken Naming Patterns</h3>
+                <p>snake_case mixed with camelCase becomes a code review nightmare across large teams.</p>
+            </div>
+
+            <div class="card">
+                <div style="font-size:52px;">⚡</div>
+                <h3>Performance Anti-Patterns</h3>
+                <p>Nested loops, sync blocking operations, and memory leaks slip through unnoticed.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- How It Works -->
-    <section style="background-color: #161b22;">
-        <div class="container">
-            <h2 class="section-title">How It Works</h2>
-            <p class="section-subtitle">Three steps to repo-ready code</p>
-            
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Paste AI-Generated Code</h3>
-                    <p>Copy code from ChatGPT, Claude, or any AI assistant into DebugLens</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>DebugLens + Bob Analyze</h3>
-                    <p>Instantly scans against your repository patterns, conventions, and utilities</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Get Fixed Code</h3>
-                    <p>Receive automatically corrected, repo-ready code with all issues resolved</p>
-                </div>
+<section id="features" style="background:#161b22;">
+    <div class="container">
+        <h2 class="section-title">Seven Core Features</h2>
+        <p class="section-subtitle">Validate, analyze, and automatically fix AI-generated code using real repository patterns and CI/CD integration.</p>
+
+        <div class="features-grid">
+            <div class="card">
+                <div class="feature-number">1</div>
+                <h3>Library Mismatch Detection</h3>
+                <p>Detects imports not used anywhere in your repository and recommends the correct internal standard automatically.</p>
+            </div>
+
+            <div class="card">
+                <div class="feature-number">2</div>
+                <h3>Naming Convention Validation</h3>
+                <p>Analyzes repository-wide naming conventions and flags every non-conforming identifier generated by AI.</p>
+            </div>
+
+            <div class="card">
+                <div class="feature-number">3</div>
+                <h3>Error Handling Analysis</h3>
+                <p>Compares AI code against repository error-handling scores and injects missing try-catch patterns.</p>
+            </div>
+
+            <div class="card">
+                <div class="feature-number">4</div>
+                <h3>Duplicate Utility Detection</h3>
+                <p>Prevents AI from reinventing existing utilities and suggests importing already available functions.</p>
+            </div>
+
+            <div class="card">
+                <div class="feature-number">5</div>
+                <h3>Performance Analysis</h3>
+                <p>Detects nested loops, sync blocking operations, missing awaits, and memory leak risks automatically.</p>
+            </div>
+
+            <div class="card">
+                <div class="feature-number">6</div>
+                <h3>Auto-Fix Engine</h3>
+                <p>Automatically rewrites AI-generated code into repository-compliant production-ready code in one command.</p>
+            </div>
+
+            <div class="card">
+                <div class="feature-number">7</div>
+                <h3>GitHub Actions CI/CD Integration</h3>
+                <p>Automatically validates every pull request, comments detailed findings on PRs, and blocks merges when HIGH severity issues are detected.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Violations Section -->
-    <section id="demo">
-        <div class="container">
-            <h2 class="section-title">What DebugLens Catches</h2>
-            <p class="section-subtitle">Five categories of violations detected automatically</p>
-            
-            <div class="violations">
-                <div class="badge badge-high">
-                    <span>🔴</span>
-                    <span>HIGH: Missing error handling</span>
-                </div>
-                <div class="badge badge-high">
-                    <span>🔴</span>
-                    <span>HIGH: Performance issue detected</span>
-                </div>
-                <div class="badge badge-medium">
-                    <span>🟡</span>
-                    <span>MEDIUM: Library mismatch (axios)</span>
-                </div>
-                <div class="badge badge-medium">
-                    <span>🟡</span>
-                    <span>MEDIUM: Naming convention</span>
-                </div>
-                <div class="badge badge-low">
-                    <span>🔵</span>
-                    <span>LOW: Duplicate utilities</span>
-                </div>
-            </div>
+<section>
+    <div class="container">
+        <h2 class="section-title">What DebugLens Detects</h2>
+        <p class="section-subtitle">Five categories of violations identified instantly during pull requests and local development.</p>
+
+        <div class="violations">
+            <span class="badge badge-high">🔴 Missing error handling</span>
+            <span class="badge badge-high">🔴 O(n²) performance issues</span>
+            <span class="badge badge-medium">🟡 Library mismatch</span>
+            <span class="badge badge-medium">🟡 Naming convention violations</span>
+            <span class="badge badge-low">🔵 Duplicate utilities</span>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Code Comparison -->
-    <section style="background-color: #161b22;">
-        <div class="container">
-            <h2 class="section-title">Before & After</h2>
-            <p class="section-subtitle">See the transformation in action</p>
-            
-            <div class="code-comparison">
-                <div class="code-block">
-                    <div class="code-header before">❌ Before (AI-Generated)</div>
-                    <div class="code-content">
-<code>const <span class="highlight-error">axios</span> = require('<span class="highlight-error">axios</span>');
+<section style="background:#161b22;">
+    <div class="container">
+        <h2 class="section-title">Before & After Auto-Fix</h2>
+        <p class="section-subtitle">DebugLens transforms AI-generated snippets into repository-compliant production-ready code automatically.</p>
 
-async function <span class="highlight-error">create_new_user</span>(user_data) {
-  const response = await <span class="highlight-error">axios</span>.post(
-    'https://api.example.com/users',
-    user_data
-  );
-  
+        <div class="comparison">
+            <div class="code-window">
+                <div class="code-header" style="color:#f85149;">❌ AI Generated Code</div>
+<pre>const axios = require('axios');
+
+async function create_new_user(user_data) {
+  const response = await axios.post('/users', user_data);
   return response.data;
-}</code>
-                    </div>
-                </div>
-                
-                <div class="code-block">
-                    <div class="code-header after">✅ After (Auto-Fixed)</div>
-                    <div class="code-content">
-<code>const { <span class="highlight-success">handleError</span> } = require('./utils');
+}</pre>
+            </div>
 
-async function <span class="highlight-success">createNewUser</span>(userData) {
+            <div class="code-window">
+                <div class="code-header" style="color:#3fb950;">✅ DebugLens Auto-Fixed</div>
+<pre>const { handleError } = require('./utils');
+
+async function createNewUser(userData) {
   try {
-    const response = await <span class="highlight-success">fetch</span>(
-      'https://api.example.com/users',
-      { method: 'POST', body: JSON.stringify(userData) }
-    );
-    
+    const response = await fetch('/users', {
+      method: 'POST',
+      body: JSON.stringify(userData)
+    });
+
     return await response.json();
-  } catch (error) {
-    return <span class="highlight-success">handleError</span>(error, 'createNewUser');
+  } catch(error) {
+    return handleError(error);
   }
-}</code>
-                    </div>
-                </div>
+}</pre>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- GitHub Action -->
-    <section>
-        <div class="container">
-            <h2 class="section-title">CI/CD Integration</h2>
-            <p class="section-subtitle">Automatically validate every pull request</p>
-            
-            <div class="github-action">
-                <h3>GitHub Actions Workflow</h3>
-                <pre><code>name: DebugLens Validation
+<section id="workflow">
+    <div class="container">
+        <h2 class="section-title">GitHub Actions Integration</h2>
+        <p class="section-subtitle">Automatically validate every pull request, comment issues directly on GitHub, and block unsafe merges.</p>
 
-on: [pull_request]
+        <div class="github-action">
+            <div class="code-header">⚙️ Production CI/CD Workflow</div>
+<pre>name: DebugLens Validation
+
+on:
+  pull_request:
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run DebugLens
-        run: |
-          npm install
-          node validate-pr.js
-      - name: Comment Results
-        uses: actions/github-script@v6
-        with:
-          script: |
-            // Auto-comment validation results on PR
-            // Fails CI if HIGH severity issues found</code></pre>
-            </div>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>Open Source • ISC License</p>
-            <a href="https://github.com/yourusername/debuglens-mcp">View on GitHub</a>
-            <div class="bob-badge">
-                <span>🤖</span>
-                <span>Built with IBM Bob</span>
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run validation on changed JS files
+        run: |
+          node test-validation.js
+
+      - name: Comment validation results
+        uses: actions/github-script@v7
+
+      - name: Fail on HIGH severity issues
+        run: |
+          if grep -q "HIGH" results.txt; then
+            exit 1
+          fi</pre>
+        </div>
+
+        <div class="workflow-badges" style="margin-top:32px;">
+            <span class="badge badge-high">🚫 Blocks critical PRs</span>
+            <span class="badge badge-medium">💬 Auto-comments review feedback</span>
+            <span class="badge badge-low">⚡ Runs on every pull request</span>
+        </div>
+    </div>
+</section>
+
+<section style="background:#161b22;">
+    <div class="container">
+        <h2 class="section-title">Impact & Benefits</h2>
+        <p class="section-subtitle">Built not just as a demo — but as a realistic developer productivity and AI governance tool.</p>
+
+        <div class="impact-grid">
+            <div class="card">
+                <h3>⏱️ Faster Reviews</h3>
+                <p>Saves roughly 30 minutes per pull request review cycle by catching repository mismatches instantly.</p>
+            </div>
+
+            <div class="card">
+                <h3>⚡ Instant Feedback</h3>
+                <p>Validation completes in under 2 seconds directly inside IBM Bob or GitHub Actions.</p>
+            </div>
+
+            <div class="card">
+                <h3>🛡️ Technical Debt Prevention</h3>
+                <p>Stops inconsistent AI-generated code before it reaches production repositories.</p>
             </div>
         </div>
-    </footer>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <h2 style="margin-bottom:14px;color:white;">🔍 DebugLens</h2>
+        <p>AI Code Validator powered by IBM Bob</p>
+        
+    </div>
+</footer>
+
 </body>
 </html>
