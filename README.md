@@ -34,7 +34,7 @@ DebugLens is an **MCP (Model Context Protocol) server** that validates AI-genera
 
 It works natively inside **IBM Bob**, your AI coding assistant, providing instant feedback and automatic fixes without leaving your workflow.
 
-### 🎯 Six Core Features
+### 🎯 Seven Core Features
 
 #### **Feature 1: Library Mismatch Detection**
 
@@ -133,7 +133,7 @@ function formatDate(date) {
 
 ---
 
-#### **Feature 5: Performance Analysis** ⚡ NEW
+#### **Feature 5: Performance Analysis** ⚡ 
 
 Detects five critical performance anti-patterns in AI-generated code.
 
@@ -237,6 +237,60 @@ async function createNewUser(userData) {
 - ✅ All fixes applied simultaneously
 
 **No manual prompting needed** — just call `auto_fix_code` and get corrected code instantly.
+
+---
+
+#### **Feature 7: GitHub Actions CI/CD Integration** 🔄
+
+Automatically validate every pull request with DebugLens in your CI/CD pipeline.
+
+**Example Workflow:**
+```yaml
+name: DebugLens Validation
+on: [pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run DebugLens
+        run: node validate-pr.js
+      - name: Comment Results on PR
+        # Posts validation results as PR comment
+      - name: Fail on HIGH severity
+        # Blocks merge if critical issues found
+```
+
+**What it does:**
+- ✅ **Triggers automatically** on every pull request
+- ✅ **Validates all changes** against repository patterns
+- ✅ **Comments results on PR** with detailed findings
+- ✅ **Fails CI on HIGH severity** issues to block merge
+- ✅ **Zero configuration** required after setup
+
+**Example PR Comment:**
+```
+🔍 DebugLens Validation Results
+
+⚠️ Found 3 issue(s):
+
+1. 🔴 HIGH: Missing error handling
+   💡 Add try-catch blocks to async functions
+
+2. 🟡 MEDIUM: Library mismatch - axios not found
+   💡 Use fetch (found in 3 repository files)
+
+3. 🟡 MEDIUM: Naming convention violation
+   💡 Convert to camelCase to match repository
+```
+
+**Benefits:**
+- Catches issues before human review
+- Enforces consistency across all PRs
+- Saves ~30 minutes per review cycle
+- Prevents technical debt accumulation
+- Works seamlessly with existing workflows
 
 ---
 
